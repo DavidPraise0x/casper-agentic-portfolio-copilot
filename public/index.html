@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casper Agentic Portfolio Copilot (CAP) - Dashboard</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- RemixIcons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <!-- Background Glows -->
+  <div class="glow-bg glow-1"></div>
+  <div class="glow-bg glow-2"></div>
+  <div class="glow-bg glow-3"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="ri-instance-line"></i></div>
+        <div class="logo-text">
+          <h1>CAP <span>Copilot</span></h1>
+          <p>Casper Agentic Portfolio Suite</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="network-badge">
+          <span class="dot"></span> Casper Testnet
+        </div>
+        <div class="wallet-badge" id="wallet-badge">
+          <i class="ri-wallet-3-line"></i>
+          <span id="wallet-status">Not Connected</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="app-workspace">
+      
+      <!-- Left Column: Wallet & Sandbox -->
+      <section class="workspace-column left-col">
+        <!-- Account Card -->
+        <div class="glass-card wallet-card">
+          <div class="card-header">
+            <h3><i class="ri-user-shared-line"></i> Active Account</h3>
+            <button class="btn btn-sm" id="btn-generate-wallet" title="Generate test account key"><i class="ri-magic-line"></i> Auto-Gen</button>
+          </div>
+          <div class="address-display">
+            <span class="label">Public Key (Hex):</span>
+            <div class="address-input-group">
+              <input type="text" id="public-key-input" placeholder="Enter Casper public key..." value="0124ba60a2b8e5c3e7f41f021e15ab9c9d4ff843a85b9b6ff8c4fbeea37d825c9b">
+              <button id="btn-check-balance" class="icon-btn"><i class="ri-refresh-line"></i></button>
+            </div>
+          </div>
+          <div class="balance-display">
+            <span class="label">Total Balance:</span>
+            <div class="balance-value"><span id="balance-amount">0.00</span> <span class="symbol">CSPR</span></div>
+            <p class="balance-sub" id="balance-motes">0 motes</p>
+          </div>
+          <div class="allocation-chart-container">
+            <canvas id="allocation-chart" width="200" height="200"></canvas>
+          </div>
+        </div>
+
+        <!-- Deploy Sandbox -->
+        <div class="glass-card deploy-card">
+          <div class="card-header">
+            <h3><i class="ri-cpu-line"></i> Deploy Sandbox</h3>
+            <span class="badge" id="deploy-badge">Idle</span>
+          </div>
+          <div class="deploy-payload-area">
+            <span class="label">Generated Deploy JSON:</span>
+            <pre class="json-viewer" id="deploy-json-viewer">{ "info": "Prepare a transaction with the Agent to see the JSON payload here." }</pre>
+          </div>
+          <div class="deploy-actions">
+            <button class="btn btn-primary w-full" id="btn-sign-deploy" disabled>
+              <i class="ri-quill-pen-line"></i> Sign & Broadcast Deploy
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Center Column: Agent Studio -->
+      <section class="workspace-column center-col chat-col">
+        <div class="glass-card chat-card">
+          <div class="chat-header">
+            <div class="agent-profile">
+              <div class="agent-avatar"><i class="ri-robot-2-line"></i></div>
+              <div class="agent-info">
+                <h4>CAP Agent Engine</h4>
+                <p><span class="pulse"></span> Connected via Casper MCP Server</p>
+              </div>
+            </div>
+            <div class="chat-actions">
+              <button class="icon-btn" id="btn-clear-chat" title="Clear chat"><i class="ri-delete-bin-line"></i></button>
+            </div>
+          </div>
+          
+          <!-- Chat Feed -->
+          <div class="chat-messages" id="chat-messages">
+            <!-- System Greeting -->
+            <div class="message system">
+              <div class="message-content">
+                <p><strong>System Note:</strong> CAP Copilot is initialized. The agent has hot-plug access to Casper blockchain tools using standard Model Context Protocol (MCP) definitions.</p>
+              </div>
+            </div>
+            
+            <div class="message agent">
+              <div class="avatar"><i class="ri-robot-2-line"></i></div>
+              <div class="message-body">
+                <div class="message-content">
+                  <p>Hello! I am your <strong>Casper Agentic Portfolio Copilot (CAP)</strong>. 🤖</p>
+                  <p>I can execute transactions, monitor yields, and evaluate RWA risk on the Casper Network using MCP tools. What would you like to build or check today?</p>
+                </div>
+                <div class="message-meta">Agent • Just now</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Quick Prompts -->
+          <div class="quick-prompts">
+            <button class="quick-prompt-btn">Check Balance</button>
+            <button class="quick-prompt-btn">Show Staking APYs</button>
+            <button class="quick-prompt-btn">Transfer 5 CSPR</button>
+            <button class="quick-prompt-btn">Analyze Gold Collateral Risk</button>
+          </div>
+
+          <!-- Chat Input -->
+          <div class="chat-input-area">
+            <textarea id="chat-input" placeholder="Ask CAP to check balance, prepare transactions, delegate CSPR..." rows="1"></textarea>
+            <button id="btn-send-chat" class="btn btn-primary"><i class="ri-send-plane-2-line"></i></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Yields & Logs -->
+      <section class="workspace-column right-col">
+        <!-- Yields Card -->
+        <div class="glass-card yields-card">
+          <div class="card-header">
+            <h3><i class="ri-funds-line"></i> Validator Staking Yields</h3>
+          </div>
+          <div class="yield-list" id="yield-list">
+            <!-- Loaded dynamically -->
+            <div class="loading-spinner">
+              <i class="ri-loader-4-line spin"></i> Loading yields from Casper node...
+            </div>
+          </div>
+        </div>
+
+        <!-- RWA Oracle Monitor -->
+        <div class="glass-card rwa-card">
+          <div class="card-header">
+            <h3><i class="ri-shield-check-line"></i> RWA Risk & Compliance</h3>
+          </div>
+          <div class="rwa-status-area" id="rwa-status-area">
+            <div class="rwa-empty">
+              <i class="ri-folder-shield-2-line"></i>
+              <p>No active RWA collateral assessment loaded.</p>
+              <span class="subtext">Ask the AI Agent: "Analyze collateral risk" to evaluate a loan-to-value status.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transaction Log -->
+        <div class="glass-card logs-card">
+          <div class="card-header">
+            <h3><i class="ri-list-settings-line"></i> Deploy Activity Log</h3>
+          </div>
+          <div class="log-list" id="log-list">
+            <div class="log-empty">
+              <p>No transactions signed yet.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
