@@ -60,10 +60,14 @@ function setupEventListeners() {
   // Wallet and balance refresh
   const btnCheckBalance = document.getElementById('btn-check-balance');
   const btnGenerateWallet = document.getElementById('btn-generate-wallet');
+  const btnFaucet = document.getElementById('btn-faucet');
   const pkInput = document.getElementById('public-key-input');
   
   btnCheckBalance.addEventListener('click', refreshBalance);
   btnGenerateWallet.addEventListener('click', generateTestWallet);
+  if (btnFaucet) {
+    btnFaucet.addEventListener('click', claimFaucetCSPR);
+  }
   
   pkInput.addEventListener('change', (e) => {
     activePublicKey = e.target.value.trim();
@@ -73,6 +77,40 @@ function setupEventListeners() {
   // Deploy sandbox actions
   const btnSignDeploy = document.getElementById('btn-sign-deploy');
   btnSignDeploy.addEventListener('click', signAndBroadcastDeploy);
+}
+
+// Faucet funding mock function
+function claimFaucetCSPR() {
+  mockBalanceCspr += 1000.00;
+  updateBalanceUI();
+  updateChartData();
+  
+  const logList = document.getElementById('log-list');
+  const emptyLog = logList.querySelector('.log-empty');
+  if (emptyLog) emptyLog.remove();
+  
+  const chars = '0123456789abcdef';
+  let claimHash = 'faucet-claim-';
+  for (let i = 0; i < 16; i++) {
+    claimHash += chars[Math.floor(Math.random() * 16)];
+  }
+  
+  const logItem = document.createElement('div');
+  logItem.className = 'log-item';
+  logItem.style.borderLeftColor = '#10b981'; // Green for funding
+  logItem.innerHTML = `
+    <div class="title-row">
+      <span>Faucet Fund</span>
+      <span style="color: #10b981">+1,000 CSPR</span>
+    </div>
+    <div class="hash">Tx: ${claimHash}</div>
+    <div class="meta" style="font-size: 0.65rem; color: var(--color-text-muted);">
+      Source: Casper Testnet Faucet
+    </div>
+  `;
+  logList.insertBefore(logItem, logList.firstChild);
+  
+  appendMessage('system', `⛲ Faucet funded: Added 1,000 CSPR to account ${activePublicKey.slice(0,8)}...`);
 }
 
 // Generate a random Casper key pair mock for local testing
@@ -124,7 +162,13 @@ async function refreshBalance() {
     
     const result = await response.json();
     if (result.data) {
-      mockBalanceCspr = result.data.balanceCspr || 0;
+      const realBalance = parseFloat(result.data.balanceCspr);
+      if (isNaN(realBalance) || (realBalance === 0 && mockBalanceCspr > 0)) {
+        console.log("Account is not active on Testnet; keeping simulated mock balance.");
+        appendMessage('system', `Note: Account ${activePublicKey.slice(0,8)}... has 0 CSPR on Testnet. Using mock balance for simulation.`);
+      } else {
+        mockBalanceCspr = realBalance;
+      }
       updateBalanceUI();
       updateChartData();
       
