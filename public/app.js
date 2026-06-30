@@ -414,6 +414,12 @@ function handleToolOutput(toolName, data) {
     
     const btn = document.getElementById('btn-sign-deploy');
     btn.removeAttribute('disabled');
+
+    // Add glowing pending state to deploy card
+    const deployCard = document.querySelector('.deploy-card');
+    if (deployCard) {
+      deployCard.classList.add('pending-active');
+    }
   }
   else if (toolName === 'analyze_rwa_risk') {
     // Deduct x402 micropayment fee (0.05 CSPR)
@@ -501,6 +507,12 @@ async function signAndBroadcastDeploy() {
   
   // Simulate 1.5 seconds network delay for cryptographic signing and node broadcast
   setTimeout(() => {
+    // Remove glowing pending state from deploy card
+    const deployCard = document.querySelector('.deploy-card');
+    if (deployCard) {
+      deployCard.classList.remove('pending-active');
+    }
+
     btn.innerHTML = `<i class="ri-check-line"></i> Transaction Success`;
     badge.className = 'badge';
     badge.textContent = 'Idle';
