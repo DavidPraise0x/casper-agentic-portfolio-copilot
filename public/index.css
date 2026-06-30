@@ -227,6 +227,8 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
   gap: 1.25rem;
   min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 /* Glassmorphism Card Style */
@@ -419,7 +421,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 160px;
+  height: 130px;
   margin-top: 0.5rem;
 }
 
@@ -469,7 +471,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0.75rem;
   display: flex;
   flex-direction: column;
-  min-height: 140px;
+  min-height: 100px;
   overflow: hidden;
   margin-bottom: 1rem;
 }
