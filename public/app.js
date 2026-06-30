@@ -372,17 +372,47 @@ function handleToolOutput(toolName, data) {
     btn.removeAttribute('disabled');
   }
   else if (toolName === 'analyze_rwa_risk') {
+    // Deduct x402 micropayment fee (0.05 CSPR)
+    const x402Fee = 0.05;
+    mockBalanceCspr -= x402Fee;
+    updateBalanceUI();
+
+    // Log the x402 payment event
+    const logList = document.getElementById('log-list');
+    const emptyLog = logList.querySelector('.log-empty');
+    if (emptyLog) emptyLog.remove();
+
+    const chars = '0123456789abcdef';
+    let x402Hash = 'x402-proof-';
+    for (let i = 0; i < 16; i++) {
+      x402Hash += chars[Math.floor(Math.random() * 16)];
+    }
+
+    const logItem = document.createElement('div');
+    logItem.className = 'log-item';
+    logItem.style.borderLeftColor = '#3b82f6'; // Blue border for x402
+    logItem.innerHTML = `
+      <div class="title-row">
+        <span>x402 Micropayment</span>
+        <span style="color: #3b82f6">-0.05 CSPR</span>
+      </div>
+      <div class="hash">Proof: ${x402Hash}</div>
+      <div class="meta" style="font-size: 0.65rem; color: var(--color-text-muted);">
+        Target: RWA Risk Evaluator API
+      </div>
+    `;
+    logList.insertBefore(logItem, logList.firstChild);
+
     // Load collateral status widget
     const rwaArea = document.getElementById('rwa-status-area');
     const isSafe = data.riskRating === 'Low' || data.riskRating === 'Moderate';
-    const shieldIcon = isSafe ? 'ri-shield-check-line' : 'ri-shield-flash-line';
     const riskColor = data.color;
     
     // Update active vault mock asset values
     if (isSafe) {
-      mockRwaCspr = data.requestedLoanUsd / 2; // Simulated CSPR valuation
-      updateChartData();
+      mockRwaCspr += data.requestedLoanUsd / 2; // Simulated CSPR valuation
     }
+    updateChartData();
     
     rwaArea.innerHTML = `
       <div class="rwa-loaded-card">

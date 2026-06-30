@@ -239,7 +239,7 @@ export async function handleAgentChat(req: Request, res: Response) {
 
       const toolResult = await toolResponse.json() as any;
       return res.json({
-        response: `🛡️ **Calling MCP Tool**: \`analyze_rwa_risk\`\n\n` + toolResult.content[0].text,
+        response: `🛡️ **Calling MCP Tool**: \`analyze_rwa_risk\`\n🔑 **x402 Micropayment**: Generated cryptographic proof payload. Deducted \`0.05 CSPR\` fee automatically.\n\n` + toolResult.content[0].text,
         toolCalled: 'analyze_rwa_risk',
         toolData: toolResult.data
       });
